@@ -5,7 +5,15 @@ section .data
 ; 10 (0xA em hexadecimal) corresponde ao caractere newline (\n) na tabela ascii
 newline: db 10
 
-message: db 'Digite um caractere: ', 0
+message: db 'Qual seu nome? ', 0
+
+hello: db 'Hello, ', 0
+
+section .bss
+
+; resb = reserve byte
+; reservando um buufer de 16 bytes
+name: resb 16
 
 section .text
 
@@ -196,24 +204,69 @@ read_char:
 
     ret
 
-_start:
-    mov rdi, 0xFFFFFFFFFFFFFFFF
-    call print_uint
-    call print_newline
+; rdi recebe o endereço do primeiro byte do buffer
+; rsi recebe o tamanho do buffer
+; faz a leitura de uma string em stdin
+; devolve 0 se a string for muito grande para o buffer
+; caso contrário devolve o endereço do buffer
+read:
+    mov rdx, rsi
+    mov rsi, rdi
 
-    mov rdi, -273
-    call print_int
-    call print_newline
+    mov rax, 0
+    mov rdi, 0
+    syscall
+    
+    ; ao realizar uma chamada de sistema read
+    ; é devolvido em rax o número de bytes lidos
+    cmp rax, rdx
+    jb .save
+
+    xor rax, rax
+    ret
+
+.save:
+    ; adiciona o caractere nulo ao final da string
+    mov byte [rsi + rax - 1], 0
+    mov rax, rsi
+
+    ret
+
+_start:
+    ; mov rdi, 0xFFFFFFFFFFFFFFFF
+    ; call print_uint
+    ; call print_newline
+
+    ; mov rdi, -273
+    ; call print_int
+    ; call print_newline
 
     mov rdi, message
     call print
+    
+    mov rdi, name
+    mov rsi, 16
+    call read
 
-    call read_char
+    test rax, rax
+    jz .end
+
+    push rax
+
+    mov rdi, hello
+    call print
+
+    pop rax
     
     mov rdi, rax
+    call print
+    
+    mov rdi, '!'
     call print_char
+
     call print_newline
 
+.end:
     xor rdi, rdi
     jmp exit
 
