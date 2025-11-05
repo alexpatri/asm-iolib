@@ -186,8 +186,10 @@ read_char:
     ; rdx: quantidade de bytes a serem lidos
     mov rdx, 1
     syscall
-
-    mov rax, [rsp]
+    
+    ; movzx = move and zero extend
+    ; copia apenas 1 byte e preenche o resto de rax com zeros
+    movzx rax, byte [rsp]
 
     add rsp, 1
     pop rbp
