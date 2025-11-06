@@ -33,7 +33,6 @@ strlen:
 
 .loop:
     cmp byte [rdi+rax], 0
-
     je .end
 
     inc rax
@@ -231,6 +230,30 @@ read:
     mov rax, rsi
 
     ret
+
+; rdi recebe a base
+; rsi recebe o expoente
+; realiza a operação base^expoente
+; onde a base e o expoente são inteiros sem sinal
+pow:
+    mov rax, 1
+
+    test rsi, rsi
+    jz .end
+
+    mov rcx, rsi
+
+.loop:
+    mul rdi
+
+    dec rcx
+
+    test rcx, rcx
+    jnz .loop
+
+.end:
+    ret
+
 
 _start:
     ; mov rdi, 0xFFFFFFFFFFFFFFFF
