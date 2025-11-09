@@ -287,6 +287,34 @@ parse_int:
     neg rax
     ret
 
+; rdi e rsi recebem dois ponteiros para strings
+; compara as duas strings:
+;   1 = iguais
+;   0 = diferentes
+string_equals:
+    xor rax, rax
+
+; percorre as strings verificando seus caracteres são iguais
+; para se forem diferentes ou se for encontrado o caractere nulo
+.compare:
+    movzx rcx, byte [rsi]
+    movzx rdx, byte [rdi]
+    cmp rdx, rcx
+    jne .end
+
+    test rdx, rdx
+    jz .equal
+
+    inc rdi
+    inc rsi
+    jmp .compare
+
+.equal:
+    mov rax, 1
+
+.end:
+    ret
+
 _start:
     ; mov rdi, 0xFFFFFFFFFFFFFFFF
     ; call print_uint
