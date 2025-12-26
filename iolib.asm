@@ -1,17 +1,15 @@
-global _start
-
-section .data
-
-message: db 'Qual seu nome? ', 0
-hello: db 'Hello, ', 0
-
-section .bss
-
-; resb = reserve byte
-; reservando um buufer de 16 bytes
-name: resb 16
-
 section .text
+global strlen
+global print
+global print_char
+global print_newline
+global print_uint
+global print_int
+global read
+global read_char
+global parse_uint
+global parse_int
+global exit
 
 ; rdi recebe o código de saída
 ; executa a chamada de sistema exite
@@ -336,42 +334,6 @@ string_copy:
 
 .end:
     ret
-
-_start:
-    ; mov rdi, 0xFFFFFFFFFFFFFFFF
-    ; call print_uint
-    ; call print_newline
-
-    ; mov rdi, -273
-    ; call print_int
-    ; call print_newline
-
-    mov rdi, message
-    call print
-    
-    mov rdi, name
-    mov rsi, 16
-    call read
-
-    test rax, rax
-    jz .end
-
-    push rax
-
-    mov rdi, hello
-    call print
-
-    pop rax
-    
-    mov rdi, rax
-    call print
-    
-    mov rdi, '!'
-    call print_char
-    call print_newline
-.end:
-    xor rdi, rdi
-    jmp exit
 
 ; obs: se atentar ao alinhamento da pilha ao realizar chamadas de sistema
 ; o código não stpa seguindo a convensão do System V ABI quando a isso

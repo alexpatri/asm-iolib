@@ -1,24 +1,33 @@
-# Nome do arquivo executável
+# Nome do executável
 TARGET = iolib
 
-# Compilador e flags
+# Fontes Assembly
+SRCS = main.asm iolib.asm
+
+# Objetos derivados automaticamente
+OBJS = $(SRCS:.asm=.o)
+
+# Ferramentas
 ASM = nasm
 ASMFLAGS = -f elf64
 
 LD = ld
-LDFLAGS = 
+LDFLAGS =
 
 # Regra padrão
 all: $(TARGET)
 
-# Compilação
-$(TARGET): $(TARGET).o
-	$(LD) $(LDFLAGS) -o $@ $^
+# Linkedição
+$(TARGET): $(OBJS)
+	$(LD) $(LDFLAGS) -o $@ $(OBJS)
 
-# Montagem
+# Montagem (pattern rule)
 %.o: %.asm
 	$(ASM) $(ASMFLAGS) -o $@ $<
 
 # Limpeza
 clean:
-	rm -f *.o $(TARGET)
+	rm -f $(OBJS) $(TARGET)
+
+.PHONY: all clean
+
